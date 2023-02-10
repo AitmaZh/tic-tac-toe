@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -28,6 +30,7 @@ class _HomePageState extends State<HomePage> {
   int xScore = 0;
   bool oTurn = true;
   var displayXO = List.filled(9, '', growable: false);
+  int filledCellsNum = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -37,33 +40,33 @@ class _HomePageState extends State<HomePage> {
         children: <Widget>[
           Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(top: 83),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Column(children: <Widget>[
-                      const Text(
-                        'Player O',
-                        style: TextStyle(color: Colors.white, fontSize: 21),
-                      ),
-                      Text(
-                        oScore.toString(),
-                        style: const TextStyle(color: Colors.white, fontSize: 21),
-                      ),
-                    ]),
-                    Column(children: <Widget>[
-                      const Text(
-                        'Player X',
-                        style: TextStyle(color: Colors.white, fontSize: 21),
-                      ),
-                      Text(
-                        xScore.toString(),
-                        style: const TextStyle(color: Colors.white, fontSize: 21),
-                      ),
-                    ]),
-                  ],
-                ),
-              )),
+            padding: const EdgeInsets.only(top: 83),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Column(children: <Widget>[
+                  const Text(
+                    'Player O',
+                    style: TextStyle(color: Colors.white, fontSize: 21),
+                  ),
+                  Text(
+                    oScore.toString(),
+                    style: const TextStyle(color: Colors.white, fontSize: 21),
+                  ),
+                ]),
+                Column(children: <Widget>[
+                  const Text(
+                    'Player X',
+                    style: TextStyle(color: Colors.white, fontSize: 21),
+                  ),
+                  Text(
+                    xScore.toString(),
+                    style: const TextStyle(color: Colors.white, fontSize: 21),
+                  ),
+                ]),
+              ],
+            ),
+          )),
           Expanded(
             flex: 3,
             child: GridView.builder(
@@ -81,7 +84,8 @@ class _HomePageState extends State<HomePage> {
                     child: Center(
                       child: Text(
                         displayXO[index],
-                        style: const TextStyle(color: Colors.white, fontSize: 35),
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 35),
                       ),
                     ),
                   ),
@@ -101,10 +105,12 @@ class _HomePageState extends State<HomePage> {
       if (displayXO[index] == '') {
         if (oTurn) {
           displayXO[index] = 'o';
+          filledCellsNum++;
           _checkWinner();
           oTurn = !oTurn;
         } else {
           displayXO[index] = 'x';
+          filledCellsNum++;
           _checkWinner();
           oTurn = !oTurn;
         }
@@ -113,7 +119,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _checkWinner() {
-    // In line on 1st row -OR- on 1st column -OR- falling diagonal
+    // Figures in line on 1st row -OR- on 1st column -OR- falling diagonal
     if ((displayXO[0] == displayXO[1] &&
             displayXO[0] == displayXO[2] &&
             displayXO[0] != '') ||
@@ -125,28 +131,28 @@ class _HomePageState extends State<HomePage> {
             displayXO[0] != '')) {
       _showDialog(displayXO[0]);
     }
-    // In line on 2nd row
+    // Figures in line on 2nd row
     if (displayXO[3] == displayXO[4] &&
         displayXO[3] == displayXO[5] &&
         displayXO[3] != '') {
       _showDialog(displayXO[3]);
     }
 
-    // In line on 3rd row
+    // Figures in line on 3rd row
     if (displayXO[6] == displayXO[7] &&
         displayXO[6] == displayXO[8] &&
         displayXO[6] != '') {
       _showDialog(displayXO[6]);
     }
 
-    // In line on 2st column
+    // Figures in line on 2st column
     if (displayXO[1] == displayXO[4] &&
         displayXO[1] == displayXO[7] &&
         displayXO[1] != '') {
       _showDialog(displayXO[1]);
     }
 
-    // In line on 3st column -OR- on rising diagonal
+    // Figures in line on 3st column -OR- on rising diagonal
     if ((displayXO[2] == displayXO[5] &&
             displayXO[2] == displayXO[8] &&
             displayXO[2] != '') ||
@@ -154,6 +160,10 @@ class _HomePageState extends State<HomePage> {
             displayXO[2] == displayXO[6] &&
             displayXO[2] != '')) {
       _showDialog(displayXO[2]);
+    }
+
+    if (filledCellsNum == 9) {
+      _showDrawDialog();
     }
   }
 
@@ -192,8 +202,13 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: 13),
-                      child: Text('Made by @AitmaZh',
-                      style: TextStyle(color: Color.fromRGBO(0, 0, 0, .4), fontSize: 12, fontStyle: FontStyle.normal),),
+                      child: Text(
+                        'Made by @AitmaZh',
+                        style: TextStyle(
+                            color: Color.fromRGBO(0, 0, 0, .4),
+                            fontSize: 12,
+                            fontStyle: FontStyle.normal),
+                      ),
                     ),
                   ],
                 ),
@@ -209,11 +224,86 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  _showDrawDialog() {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Column(
+                children: [
+                  const Text(
+                    'DRAW!',
+                    style: TextStyle(fontSize: 60),
+                  ),
+                  Text(
+                    _randomQuote(),
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              Center(
+                child: Column(
+                  children: [
+                    OutlinedButton(
+                      onPressed: () {
+                        _clearBoard();
+                        Navigator.of(context).pop();
+                      },
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.grey[700],
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text('Restart Game'),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 13),
+                      child: Text(
+                        'Made by @AitmaZh',
+                        style: TextStyle(
+                            color: Color.fromRGBO(0, 0, 0, .4),
+                            fontSize: 12,
+                            fontStyle: FontStyle.normal),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        });
+  }
+
   void _clearBoard() {
     setState(() {
       for (int i = 0; i < displayXO.length; i++) {
         displayXO[i] = '';
       }
     });
+
+    filledCellsNum = 0;
+  }
+
+  /// Generates Random number in range from 0 to 4
+  ///
+  /// Returns a quote according to the drawn number
+  _randomQuote() {
+    var quoteNum = Random().nextInt(4);
+    switch (quoteNum) {
+      case 1:
+        return '“Do you know what my favorite part of the game is? The opportunity to play.” \n--Mike Singletary';
+      case 2:
+        return '“Instead of playing to win, I was playing not to lose." \n--Sean Covey';
+      case 3:
+        return '"We must accept finite disappointment, but never lose infinite hope." \n--Martin Luther King';
+      case 4:
+        return '"You cannot win unless you learn how to lose." \n--Kareem Abdul-Jabbar';
+      default:
+        return '"Win if you can, lose if you must, but always cheat." \n--Jesse Ventura';
+    }
   }
 }
