@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: HomePage(),
     );
@@ -36,39 +36,34 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         children: <Widget>[
           Expanded(
-              child: Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(top: 73, right: 45),
-                  child: Column(children: <Widget>[
-                    const Text(
-                      'Player O',
-                      style: TextStyle(color: Colors.white, fontSize: 21),
-                    ),
-                    Text(
-                      oScore.toString(),
-                      style: TextStyle(color: Colors.white, fontSize: 21),
-                    ),
-                  ]),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 83),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Column(children: <Widget>[
+                      const Text(
+                        'Player O',
+                        style: TextStyle(color: Colors.white, fontSize: 21),
+                      ),
+                      Text(
+                        oScore.toString(),
+                        style: const TextStyle(color: Colors.white, fontSize: 21),
+                      ),
+                    ]),
+                    Column(children: <Widget>[
+                      const Text(
+                        'Player X',
+                        style: TextStyle(color: Colors.white, fontSize: 21),
+                      ),
+                      Text(
+                        xScore.toString(),
+                        style: const TextStyle(color: Colors.white, fontSize: 21),
+                      ),
+                    ]),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 73),
-                  child: Column(children: <Widget>[
-                    const Text(
-                      'Player X',
-                      style: TextStyle(color: Colors.white, fontSize: 21),
-                    ),
-                    Text(
-                      xScore.toString(),
-                      style: TextStyle(color: Colors.white, fontSize: 21),
-                    ),
-                  ]),
-                ),
-              ],
-            ),
-          )),
+              )),
           Expanded(
             flex: 3,
             child: GridView.builder(
@@ -86,7 +81,7 @@ class _HomePageState extends State<HomePage> {
                     child: Center(
                       child: Text(
                         displayXO[index],
-                        style: TextStyle(color: Colors.white, fontSize: 35),
+                        style: const TextStyle(color: Colors.white, fontSize: 35),
                       ),
                     ),
                   ),
@@ -118,7 +113,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _checkWinner() {
-    // In line on 1st row OR on 1st column OR falling diagonal
+    // In line on 1st row -OR- on 1st column -OR- falling diagonal
     if ((displayXO[0] == displayXO[1] &&
             displayXO[0] == displayXO[2] &&
             displayXO[0] != '') ||
@@ -151,7 +146,7 @@ class _HomePageState extends State<HomePage> {
       _showDialog(displayXO[1]);
     }
 
-    // In line on 3st column OR on rising diagonal
+    // In line on 3st column -OR- on rising diagonal
     if ((displayXO[2] == displayXO[5] &&
             displayXO[2] == displayXO[8] &&
             displayXO[2] != '') ||
@@ -168,14 +163,40 @@ class _HomePageState extends State<HomePage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text(winner.toUpperCase() + ' WON'),
+            title: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Column(
+                children: [
+                  Text(
+                    winner.toUpperCase(),
+                    style: const TextStyle(fontSize: 60),
+                  ),
+                  const Text('WINNER!'),
+                ],
+              ),
+            ),
             actions: [
-              TextButton(
-                child: Text('Play Again'),
-                onPressed: () {
-                  _clearBoard();
-                  Navigator.of(context).pop();
-                },
+              Center(
+                child: Column(
+                  children: [
+                    OutlinedButton(
+                      onPressed: () {
+                        _clearBoard();
+                        Navigator.of(context).pop();
+                      },
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.grey[700],
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text('Restart Game'),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 13),
+                      child: Text('Made by @AitmaZh',
+                      style: TextStyle(color: Color.fromRGBO(0, 0, 0, .4), fontSize: 12, fontStyle: FontStyle.normal),),
+                    ),
+                  ],
+                ),
               ),
             ],
           );
